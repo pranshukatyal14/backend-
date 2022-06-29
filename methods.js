@@ -59,20 +59,20 @@ let mongoose=require('mongoose');
 app.use(express.json()); // global middlware
 app.listen(3000);
 
-let users=[
-    {
-        'id':1,
-        "name":'abhishek'
-    },
-    {
-        'id':2,
-        "name":'karan'
-    },
-    {
-        'id':3,
-        "name":'pranshu'
-    },
-];
+// let users=[
+//     {
+//         'id':1,
+//         "name":'abhishek'
+//     },
+//     {
+//         'id':2,
+//         "name":'karan'
+//     },
+//     {
+//         'id':3,
+//         "name":'pranshu'
+//     },
+// ];
 // app.get('/user',(req,res)=>{
 //     console.log(req.query)
 //     res.send(users)
@@ -91,7 +91,7 @@ app.use('/auth',authRouter); // global middleware
 
 userRouter
 .route('/')
-.get(getUser) // path specific middlware
+.get(getUsers) // path specific middlware
 .post(postUser)
 .patch(updateUser)
 .delete(deleteUser)
@@ -129,9 +129,16 @@ authRouter
 //     res.send("user id received");
 // })
 
-function getUser(req,res){
-    
-    res.send(users);
+async function getUsers(req,res){
+    // console.log(req.query);
+    // let allUsers=await userModel.find();
+    let user=await userModel.findOne({name:'Abhishek'});
+
+
+    res.json({
+        message:"list of all users",
+        data:allUsers
+    });
 }
 
 function postUser(req,res){
@@ -143,24 +150,28 @@ function postUser(req,res){
     })
 };
 
-function updateUser(req,res){
+async function updateUser(req,res){
     
         console.log('req.body -> data',req.body);
         //  update data in users object
         let dataToBeUpdated=req.body;
-        for(key in dataToBeUpdated){
-            users[key]=dataToBeUpdated[key]
-        }
+        let user=await userModel.findOneAndUpdate({email:'abc@gmail.com'},dataToBeUpdated);
+        // for(key in dataToBeUpdated){
+        //     users[key]=dataToBeUpdated[key]
+        // }
         res.json({
-            message:"data updated successfully"
+            message:"data updated successfully",
+            data:user
         })
 }
 
-function deleteUser(req,res){
-    
-        users={};
+async function deleteUser(req,res){
+    let dataToBeDeleted=req.body;
+    let user=await userModel.findOneAndDelete(dataToBeDeleted)
+        // users={};
         res.json({
-            message:"data has been deleted"
+            message:"data has been deleted",
+            data:user
         })
     
 }
@@ -197,17 +208,20 @@ function middleware2(req,res){
 
 
 function getSignup(req,res,next){
+   
     console.log("getuser called")
     // res.sendFile('./public/index.html',{root:__dirname});
     next();
     
 }
-function postSignup(req,res){
-    let obj=req.body;
-    console.log('backend',obj)
+ async function postSignup(req,res){
+    // let obj=req.body;
+    let dataObj=req.body;
+    let user=await userModel.create(dataObj)
+    // console.log('backend',obj)
     res.json({
         message:"user signed up",
-        data:obj
+        data:user
     })
 
 }
@@ -250,16 +264,16 @@ const userSchema=mongoose.Schema({
 // model
 const userModel=mongoose.model('userModel',userSchema);
 
-(async function createUser(){
-    let user={
-        name:'pranshu',
-        email:'abcd@gmail.com',
-        password:'12345678',
-        confirmPassword:'12345678'
-    };
+// (async function createUser(){
+//     let user={
+//         name:'pranshu',
+//         email:'abcd@gmail.com',
+//         password:'12345678',
+//         confirmPassword:'12345678'
+//     };
 
-    let data=await userModel.create(user);
-    console.log(data);
+//     let data=await userModel.create(user);
+//     console.log(data);
 
 
-})();
+// })();
