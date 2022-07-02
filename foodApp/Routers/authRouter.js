@@ -5,7 +5,9 @@ const userModel=require('../models/userModel')
 const cookieParser=require('cookie-parser');
 const { trimStart } = require("lodash");
 // app.use('/auth',authRouter); // global middleware
-
+const jwt=require('jsonwebtoken')
+// const JWT_KEY='asdfasfaedfn213423'
+const JWT_KEY=require('../secrets')
 
 authRouter
 .route('/signup')
@@ -66,8 +68,18 @@ async function loginUser(req,res){
     if(user){
         //  bcrypt -> compare 
         if(user.password==data.password){
-            res.cookie('isLoggedIn',true,
+            let uid=user['_id']; //uid
+            let token=jwt.sign({payload:uid},JWT_KEY);
+
+
+            // res.cookie('isLoggedIn',true,
+            // {httpOnly:true});
+
+
+            
+            res.cookie('login',token,
             {httpOnly:true});
+
             return res.json({
                 message:"user has logged in",
                 userDetails:data
