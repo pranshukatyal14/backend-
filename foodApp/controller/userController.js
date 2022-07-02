@@ -1,74 +1,117 @@
-const userModel=require('../models/userModel')
+const userModel = require("../models/userModel");
 
+model.exports.getUser = async function getUser(req, res) {
+  // console.log(req.query);
+  let id = req.params.id;
+  // let allUsers=await userModel.find();
 
-model.exports.getUsers=async function getUsers(req,res){
-    // console.log(req.query);
-    let allUsers=await userModel.find();
-    let user=await userModel.findOne({name:'Abhishek'});
-
-
-    res.json({
-        message:"list of all users",
-        data:allUsers
+  // let user=await userModel.findOne({name:'Abhishek'});
+  let user = await userModel.findById(id);
+  if (user) {
+    return res.json(user);
+  } else {
+    return res.json({
+      message: "user not found",
     });
-}
+  }
 
-model.exports.postUser=function postUser(req,res){
-    console.log(req.body);
-    user=req.body;
-    res.json({
-        message:"data received successfully",
-        user:req.body
-    })
+  res.json({
+    message: "list of all users",
+    data: allUsers,
+  });
 };
 
-model.exports.updateUser=async function updateUser(req,res){
-    
-        console.log('req.body -> data',req.body);
-        //  update data in users object
-        let dataToBeUpdated=req.body;
-        let user=await userModel.findOneAndUpdate({email:'abc@gmail.com'},dataToBeUpdated);
-        // for(key in dataToBeUpdated){
-        //     users[key]=dataToBeUpdated[key]
-        // }
-        res.json({
-            message:"data updated successfully",
-            data:user
-        })
-}
+model.exports.postUser = function postUser(req, res) {
+  console.log(req.body);
+  user = req.body;
+  res.json({
+    message: "data received successfully",
+    user: req.body,
+  });
+};
 
-model.exports.deleteUser=async function deleteUser(req,res){
-    let dataToBeDeleted=req.body;
-    let user=await userModel.findOneAndDelete(dataToBeDeleted)
-        // users={};
-        res.json({
-            message:"data has been deleted",
-            data:user
-        })
-    
-}
+model.exports.updateUser = async function updateUser(req, res) {
+  // console.log('req.body -> data',req.body);
 
-model.exports.getUserById=function getUserById(req,res){
-    console.log(req.params.id);
-    let paramId=req.params.id;
-    let obj={};
-    for(let i=0;i<users.length;i++){
-        if(users[i]['id']==paramId){
-            obj=users[i]
-        }
+  //  update data in users object
+  try {
+    let id = req.params.id;
+    let user = await userModel.findById(id);
+    let dataToBeUpdated = req.body;
+    if (user) {
+      const keys = [];
+      for (let key in dataToBeUpdated) {
+        keys.push(key);
+      }
+      for (let i = 0; i < keys.length; i++) {
+        user[keys[i]] = dataToBeUpdated[keys[i]];
+      }
+      const updatedData = await user.save();
+      res.json({
+        message: "data updated successfully",
+        data: user,
+      });
+    } else {
+      res.json({
+        message: "user not found",
+      });
     }
+  } catch (err) {
     res.json({
-        message:"req received",
-        data:obj
+      message: err.message,
     });
-}
+  }
 
+  // let user=await userModel.findOneAndUpdate({email:},dataToBeUpdated);
+  // for(key in dataToBeUpdated){
+  //     users[key]=dataToBeUpdated[key]
+  // }
+};
+
+model.exports.deleteUser = async function deleteUser(req, res) {
+  //   let dataToBeDeleted = req.body;
+
+  try {
+    let id = req.params.id;
+
+    //   let user = await userModel.findOneAndDelete(dataToBeDeleted);
+    let user = await userModel.findByIdAndDelete(id);
+    if(!user){
+        res.json({
+            message:"user not found"
+        })
+    }
+    // users={};
+    res.json({
+      message: "data has been deleted",
+      data: user,
+    });
+  } catch (err) {
+    res.json({
+      message: err.message,
+    });
+  }
+};
+
+// model.exports.getUserById = function getUserById(req, res) {
+//   console.log(req.params.id);
+//   let paramId = req.params.id;
+//   let obj = {};
+//   for (let i = 0; i < users.length; i++) {
+//     if (users[i]["id"] == paramId) {
+//       obj = users[i];
+//     }
+//   }
+//   res.json({
+//     message: "req received",
+//     data: obj,
+//   });
+// };
 
 // function setCookies(req,res){
 //     // res.setHeader('Set-Cookie','isLoggedIn=true');
 //     res.cookie('isLoggedIn',true,{maxAge:1000*60*60*24, secure:true, httpOnly:true});
 //     res.cookie('isPrimeMember',true);
-
 
 //     res.send('cookies has been set');
 // }
@@ -79,3 +122,14 @@ model.exports.getUserById=function getUserById(req,res){
 //     res.send('cookies recieived')
 // }
 
+
+model.exports.getAllUsers = async function  getAllUser(req, res) {
+   let users=await userModel.find();
+   if(users){
+    res.json({
+        message:"users retrieved",
+        data:users
+    })
+   }
+
+  };
