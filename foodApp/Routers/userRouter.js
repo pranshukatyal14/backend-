@@ -3,9 +3,14 @@ const userRouter=express.Router();
 
 // const userModel=require('../models/userModel')
 // app.use('/user',userRouter); // global middleware
-const protectRoute=require('./authHelper');
+// const protectRoute=require('./authHelper');
+const app=express();
 
 const {getUser,getAllUser,updateUser,deleteUser}=require('../controller/userController')
+
+// const {signup,login,protectRoute,isAuthorised,resetPasword,forgetPasword}=require('../controller/authController')
+
+const {signup,login,isAuthorised,protectRoute}=require('../controller/authController')
 
 // for learning purpose
 
@@ -34,6 +39,16 @@ const {getUser,getAllUser,updateUser,deleteUser}=require('../controller/userCont
 userRouter.route('/:id')
 .patch(updateUser)
 .delete(deleteUser)
+
+
+userRouter
+.route('/signup')
+.post(signup)
+
+userRouter
+.route('/login')
+.post(login)
+
 
 //  profile page
 app.use(protectRoute)

@@ -1,6 +1,6 @@
 const userModel = require("../models/userModel");
 
-model.exports.getUser = async function getUser(req, res) {
+module.exports.getUser = async function getUser(req, res) {
   // console.log(req.query);
   let id = req.params.id;
   // let allUsers=await userModel.find();
@@ -21,7 +21,7 @@ model.exports.getUser = async function getUser(req, res) {
   });
 };
 
-model.exports.postUser = function postUser(req, res) {
+module.exports.postUser = function postUser(req, res) {
   console.log(req.body);
   user = req.body;
   res.json({
@@ -30,7 +30,7 @@ model.exports.postUser = function postUser(req, res) {
   });
 };
 
-model.exports.updateUser = async function updateUser(req, res) {
+module.exports.updateUser = async function updateUser(req, res) {
   // console.log('req.body -> data',req.body);
 
   //  update data in users object
@@ -68,7 +68,7 @@ model.exports.updateUser = async function updateUser(req, res) {
   // }
 };
 
-model.exports.deleteUser = async function deleteUser(req, res) {
+module.exports.deleteUser = async function deleteUser(req, res) {
   //   let dataToBeDeleted = req.body;
 
   try {
@@ -123,7 +123,7 @@ model.exports.deleteUser = async function deleteUser(req, res) {
 // }
 
 
-model.exports.getAllUsers = async function  getAllUser(req, res) {
+module.exports.getAllUser = async function  getAllUser(req, res) {
    let users=await userModel.find();
    if(users){
     res.json({
